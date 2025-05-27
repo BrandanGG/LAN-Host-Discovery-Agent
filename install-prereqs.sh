@@ -49,3 +49,9 @@ fi
 sudo apt install -y python3-venv
 
 echo "Python environment setup complete!"
+
+# Install pip requirements
+echo "Installing Python package requirements..."
+pip install -r requirements.txt
+
+echo "All prerequisites have been installed successfully!"
