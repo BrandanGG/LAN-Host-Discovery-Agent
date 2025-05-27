@@ -75,4 +75,3 @@ async def main(agent:Agent):
 if __name__ == "__main__": 
     agent = load_config('config.yaml')
     asyncio.run(main(agent))
-    #asyncio.run(activeHosts())
