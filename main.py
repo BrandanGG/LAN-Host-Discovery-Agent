@@ -4,6 +4,7 @@ import asyncio
 import yaml
 import socket
 
+#scans all hosts in the provided network range except the gateway
 
 def load_config(path:str):
      with open(path, 'r') as file:
@@ -12,6 +13,7 @@ def load_config(path:str):
         ipcidr = f"{network_config['gateway']}/{network_config['cidr']}"
         agent_config = config['agent']
         hostname = f"{agent_config['agent-hostname']}"
+        gateway = f"{network_config['gateway']}"
         if f"{agent_config['agent-hostname']}" == "":
             hostname = socket.gethostname()
         agent = Agent(ipcidr, hostname)
@@ -23,7 +25,7 @@ async def main(agent:Agent):
     if agent.get_hosts() <= 254: #/24 or smaller
         octs = agent.gateway.split(".")
         ips = [f'{octs[0]}.{octs[1]}.{octs[2]}.{x}' for x in range(int(octs[3]), agent.get_hosts()+1)]
-        tasks = [scan_host(agent, ip) for ip in ips]
+        tasks = [scan_host(agent, ip) for ip in ips if ip != agent.gateway]
         await asyncio.gather(*tasks)
         print(f'Total Number of Alive Hosts: {len(agent.up_hosts)}')
         for alive in agent.up_hosts:
@@ -51,7 +53,7 @@ async def main(agent:Agent):
                 current_third += 1
                 current_fourth = 0
                 
-        tasks = [scan_host(agent,ip) for ip in ips]
+        tasks = [scan_host(agent,ip) for ip in ips if ip != agent.gateway]
         await asyncio.gather(*tasks)
         print(f'Total Number of Alive Hosts: {len(agent.up_hosts)}')
         for alive in agent.up_hosts:
