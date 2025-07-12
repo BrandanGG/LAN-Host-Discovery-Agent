@@ -2,6 +2,7 @@ from agent import Agent
 import asyncio
 import json
 import xmltodict
+import os
 
 async def scan_host(agent:Agent, ip:str):
     try:
@@ -46,6 +47,9 @@ async def scan_alive(ip):
         
         # Convert XML to JSON
         json_data = xmltodict.parse(xml_output)
+        
+        # Create scans directory if it doesn't exist
+        os.makedirs('scans', exist_ok=True)
         
         # Save to file
         filename = f"scan_{ip.replace('.', '_')}.json"
