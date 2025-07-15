@@ -1,12 +1,15 @@
 import asyncio
 import math
+
 class Agent:
-    def __init__(self, ipcidr:str, agentName:str):
+    def __init__(self, ipcidr:str, agentName:str, api_url:str, api_endpoint:str):
         self.gateway = ipcidr.split("/")[0]
         self.cidr = int(ipcidr.split("/")[1])
         self.agentName = agentName
         self.up_hosts = []
         self.down_hosts = []
+        self.api_url = api_url
+        self.api_endpoint = api_endpoint
 
     def get_hosts(self):
         bits = 32 - self.cidr
@@ -23,4 +26,3 @@ class Agent:
             
     async def run(self):
         print(f"Starting network scan for {self.gateway}/{self.subnetmask}")
-        

@@ -4,3 +4,6 @@ network:
   cidr: 24
 agent:
   agent-hostname: "agent1"
+API:
+  url: "http://localhost:5000"
+  endpoint: "/agent/v1/upload"

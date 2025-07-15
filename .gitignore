@@ -1,2 +1,5 @@
 __pycache__/agent.cpython-313.pyc
 __pycache__/scan.cpython-313.pyc
+__pycache__/api.cpython-313.pyc
+.gitignore
+scans/*

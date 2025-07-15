@@ -3,21 +3,27 @@ from scan import scan_host, scan_alive
 import asyncio
 import yaml
 import socket
+#Local imports
+from api import upload_data
 
 #scans all hosts in the provided network range except the gateway
 
 def load_config(path:str):
      with open(path, 'r') as file:
         config = yaml.safe_load(file)
+        # Network Config
         network_config = config['network']
         ipcidr = f"{network_config['gateway']}/{network_config['cidr']}"
+        #Agent Config
         agent_config = config['agent']
         hostname = f"{agent_config['agent-hostname']}"
-        gateway = f"{network_config['gateway']}"
         if f"{agent_config['agent-hostname']}" == "":
             hostname = socket.gethostname()
-        agent = Agent(ipcidr, hostname)
-        return agent
+        # API Config
+        api_config = config['API']
+        api_url = f"{api_config['url']}"
+        api_endpoint = f"{api_config['endpoint']}"
+        return Agent(ipcidr, hostname, api_url, api_endpoint)
     
 async def main(agent:Agent):
     ## Initial Probe for online or not
@@ -52,7 +58,6 @@ async def main(agent:Agent):
             if remaining_hosts > 0:
                 current_third += 1
                 current_fourth = 0
-                
         tasks = [scan_host(agent,ip) for ip in ips if ip != agent.gateway]
         await asyncio.gather(*tasks)
         print(f'Total Number of Alive Hosts: {len(agent.up_hosts)}')
@@ -77,3 +82,4 @@ async def main(agent:Agent):
 if __name__ == "__main__": 
     agent = load_config('config.yaml')
     asyncio.run(main(agent))
+    upload_data(agent, "scans")
